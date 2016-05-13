@@ -1,4 +1,4 @@
-# Media/Data real-time analytics
+# Sample Application for JEEConf 2016 Presentation
 
 ### Build
 Standard build:
