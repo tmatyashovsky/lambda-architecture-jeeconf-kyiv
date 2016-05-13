@@ -1,0 +1,31 @@
+allprojects  {
+  group = 'com.morning.lohika.lambra.architecture'
+  version = '1.0-SNAPSHOT'
+}
+
+subprojects {
+  apply plugin: 'java'
+  sourceCompatibility = 1.8
+  targetCompatibility = 1.8
+
+  repositories {
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+  }
+
+}
+
+// Definition of dependency versions.
+ext {
+  springBootVersion = '1.3.3.RELEASE'
+  slf4jVersion = '1.7.12'
+  logbackVersion = '1.1.5'
+  jacksonVersion = '2.4.2'
+
+  apacheSparkVersion = '1.6.1'
+  apacheSparkScalaVersion = '2.10'
+
+  junitVersion = '4.11'
+  springFrameworkVersion = '4.2.4.RELEASE'
+}

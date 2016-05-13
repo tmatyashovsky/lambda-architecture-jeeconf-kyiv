@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <logger name="org.apache.spark" level="warn">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="Remoting" level="warn">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="org.apache.parquet" level="warn">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="org.apache.hadoop.io.compress" level="warn">
+        <appender-ref ref="STDOUT" />
+    </logger>
+
+    <logger name="org.apache.hadoop.util" level="error">
+        <appender-ref ref="STDOUT" />
+    </logger>
+</configuration>

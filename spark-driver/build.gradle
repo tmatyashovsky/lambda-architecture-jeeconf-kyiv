@@ -1,0 +1,22 @@
+configurations {
+    all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet'
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+
+dependencies {
+    compile project(':spark-distributed-library')
+    compile("org.springframework:spring-beans:$springFrameworkVersion")
+    compile("org.springframework:spring-context:$springFrameworkVersion")
+    compile("org.apache.spark:spark-core_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("org.apache.spark:spark-sql_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("org.apache.spark:spark-streaming_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("org.apache.spark:spark-streaming-twitter_$apacheSparkScalaVersion:$apacheSparkVersion")
+
+    compile("org.slf4j:slf4j-api:$slf4jVersion")
+    compile("ch.qos.logback:logback-classic:$logbackVersion")
+    compile("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
+    compile('org.slf4j:log4j-over-slf4j:1.7.21')
+
+    testCompile("org.springframework:spring-test:$springFrameworkVersion")
+    testCompile("junit:junit:$junitVersion")
+}

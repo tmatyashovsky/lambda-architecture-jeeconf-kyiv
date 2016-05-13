@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+apply plugin: 'spring-boot'
+
+dependencies {
+    compile project(':spark-driver')
+    compile("org.springframework.boot:spring-boot-starter-web") {
+        exclude module: 'spring-boot-starter-tomcat'
+        exclude module: 'spring-boot-starter-logging'
+    }
+    compile("org.springframework.boot:spring-boot-starter-jetty")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+
+    compile("org.slf4j:slf4j-api:$slf4jVersion")
+    compile("ch.qos.logback:logback-classic:$logbackVersion")
+
+    testCompile("junit:junit:$junitVersion")
+    testCompile("org.springframework:spring-test:$springFrameworkVersion")
+}

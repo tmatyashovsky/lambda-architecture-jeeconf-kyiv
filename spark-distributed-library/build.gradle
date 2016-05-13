@@ -1,0 +1,35 @@
+buildscript {
+    repositories { jcenter() }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:'
+    }
+}
+
+// This plugin provides the 'shadowJar' task, which create an assembly jar.
+// Because Spark requires your jar to bundle everything except spark and hadoop.
+plugins {
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
+
+jar {
+    baseName = 'spark-distributed-library'
+}
+
+configurations {
+    all*.exclude group: 'org.eclipse.jetty.orbit', module: 'javax.servlet'
+    all*.exclude group: 'org.slf4j', module: 'slf4j-log4j12'
+}
+
+dependencies {
+    // All Spark dependencies should not be in shadowJar.
+    compile("org.apache.spark:spark-core_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("org.apache.spark:spark-sql_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("org.apache.spark:spark-streaming_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("org.apache.spark:spark-streaming-twitter_$apacheSparkScalaVersion:$apacheSparkVersion")
+    compile("ch.qos.logback:logback-classic:$logbackVersion")
+}
+
+configurations {
+    // We don't want the Spark dependencies in our shadowJar.
+    runtime.exclude group: 'org.apache.spark'
+}

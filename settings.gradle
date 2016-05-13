@@ -1,0 +1,8 @@
+rootProject.name = 'lambda-architecture-with-apache-spark'
+include ':spark-distributed-library'
+include ':spark-driver'
+include ':analytics-api'
+
+project(':spark-distributed-library').projectDir = "$rootDir/spark-distributed-library" as File
+project(':spark-driver').projectDir = "$rootDir/spark-driver" as File
+project(':analytics-api').projectDir = "$rootDir/analytics-api" as File
