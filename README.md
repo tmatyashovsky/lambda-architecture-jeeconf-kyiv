@@ -1,4 +1,7 @@
-# Sample Application for "Lambda Architecture with Apache Spark" (http://www.slideshare.net/tmatyashovsky/lambda-architecture-with-apache-spark) Presentation
+# Sample Application for "Lambda Architecture with Apache Spark" Presentation
+
+## Presentation
+Link to the presentation: http://www.slideshare.net/tmatyashovsky/lambda-architecture-with-apache-spark
 
 ### Build
 Standard build:
@@ -23,7 +26,7 @@ spark.master=spark://127.0.0.1:7077
 
 spark.distributed-libraries=<path_to_your_repo>/spark-distributed-library/build/libs/spark-distributed-library-1.0-SNAPSHOT-all.jar
 
-batch.view.file.path=<path_to_your_repo>/spark-driver/src/test/resources/test-historical-data/historical-data.parquet
+batch.view.file.path=<path_to_your_repo>/spark-driver/src/test/resources/batch-views/batch-view.parquet
 
 spark.streaming.batch.duration.seconds=10
 ```
