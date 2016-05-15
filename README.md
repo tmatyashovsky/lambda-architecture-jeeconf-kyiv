@@ -17,11 +17,11 @@ Quick build without tests:
 
 ### Sample configuration for a local development environment
 
-Create spark.properties in your user home directory and use the following properties for your local environment.
+Create application.properties in your user home directory and use the following properties for your local environment.
 ```
-spark.properties
-spark.distributed-libraries=<path_to_your_repo>/spark-distributed-library/build/libs/spark-distributed-library-1.0-SNAPSHOT-all.jar
-spark.streaming.checkpoint.directory=/tmp/checkpoint
-historical.data.file.path=<path_to_your_repo>/spark-driver/src/test/resources/test-historical-data/historical-data.parquet
+application.properties
 spark.master=spark://127.0.0.1:7077
+spark.distributed-libraries=<path_to_your_repo>/spark-distributed-library/build/libs/spark-distributed-library-1.0-SNAPSHOT-all.jar
+batch.view.file.path=<path_to_your_repo>/spark-driver/src/test/resources/test-historical-data/historical-data.parquet
+
 ```
