@@ -1,4 +1,4 @@
-# Sample Application for JEEConf 2016 Presentation
+# Sample Application for "Lambda Architecture with Apache Spark" (http://www.slideshare.net/tmatyashovsky/lambda-architecture-with-apache-spark) Presentation
 
 ### Build
 Standard build:
@@ -19,9 +19,11 @@ Quick build without tests:
 
 Create application.properties in your user home directory and use the following properties for your local environment.
 ```
-application.properties
 spark.master=spark://127.0.0.1:7077
+
 spark.distributed-libraries=<path_to_your_repo>/spark-distributed-library/build/libs/spark-distributed-library-1.0-SNAPSHOT-all.jar
+
 batch.view.file.path=<path_to_your_repo>/spark-driver/src/test/resources/test-historical-data/historical-data.parquet
 
+spark.streaming.batch.duration.seconds=10
 ```
