@@ -91,6 +91,9 @@ All properties are self explanatory, but few the most important ones are listed 
 | spark.streaming.file.stream.enable | Boolean | false | # Whether use file stream instead of real Twitter. Main purpose - is backup plan when there is no Internet connection. |
 | spark.streaming.directory | String | | Directory used as backup plan for streaming when Twitter is not available |
 
+#### Twitter Properties
+For more information how to generate OAuth access token please refer to this page: https://dev.twitter.com/oauth/overview/application-owner-access-tokens
+
 #### Sample configuration for a local development environment
 Create *application.properties* (for instance, in your user home directory) and override any of the described properties. 
 For instance, minimum set of values that should be specified for your local environment is listed below:
@@ -108,8 +111,17 @@ oauth.accessTokenSecret=<replace with your own>
 ```
 Make sure that you have entered correct values that correspond to your twitter account. 
 
+### Testing
+Streaming pipeline is cover with tests in order to demonsrate how easily streaming applications can be tested via Spark.
+Stream from filesystems is used in order to mock stream from Twitter. 
+Also *tweets.txt* is being generated with some dummy tweets (and particular hashtags) to verify correctness too. 
+
 ### Run
-In order to run the application please add spring.config.location parameter that corresponds to directory that contains your custom application.properties and twitter4j.properties (in our example your user home directory). Or just enumerate them explicitly, for instance:
+
+From your favourite IDE plese run `ApplicationConfiguration` main method. 
+This will use default configuration bundled in the source code. 
+
+In order to run the application with custom configuration please add spring.config.location parameter that corresponds to directory that contains your custom *application.properties* and *twitter4j.properties* (in our example your user home directory). Or just enumerate them explicitly, for instance:
 ```
 spring.config.location=/Users/<your user>/application.properties,/Users/<your user>/twitter4j.properties
 ```
