@@ -29,7 +29,8 @@ public class SparkConfigurationBuilder {
                 .set("spark.executor.memory", sparkProperties.get("spark.executor.memory"))
                 .set("spark.sql.shuffle.partitions", sparkProperties.get("spark.sql.shuffle.partitions"))
                 .set("spark.default.parallelism", sparkProperties.get("spark.default.parallelism"))
-                .set("spark.serializer", sparkProperties.get("spark.serializer"));
+                .set("spark.serializer", sparkProperties.get("spark.serializer"))
+                .set("spark.streaming.receiver.writeAheadLog.enable", sparkProperties.get("spark.streaming.receiver.writeAheadLog.enable"));
 
         if (sparkProperties.get("spark.serializer").equals("org.apache.spark.serializer.KryoSerializer")) {
             sparkConf.set("spark.kryo.registrationRequired", "false");

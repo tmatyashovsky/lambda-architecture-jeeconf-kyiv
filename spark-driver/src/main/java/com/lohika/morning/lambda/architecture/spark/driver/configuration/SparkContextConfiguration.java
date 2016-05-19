@@ -50,6 +50,9 @@ public class SparkContextConfiguration {
     @Value("${spark.default.parallelism}")
     private String defaultParallelism;
 
+    @Value("${spark.streaming.receiver.writeAheadLog.enable}")
+    private Boolean writeAheadLogEnable;
+
     @Bean
     public SparkConfigurationBuilder sparkConfigurationBuilder() {
         return new SparkConfigurationBuilder(master, applicationName, distributedLibraries, sparkProperties());
@@ -62,6 +65,7 @@ public class SparkContextConfiguration {
         sparkProperties.put("spark.serializer", serializer);
         sparkProperties.put("spark.sql.shuffle.partitions", sqlShufflePartitions);
         sparkProperties.put("spark.default.parallelism", defaultParallelism);
+        sparkProperties.put("spark.streaming.receiver.writeAheadLog.enable", writeAheadLogEnable.toString());
 
         return sparkProperties;
     }
