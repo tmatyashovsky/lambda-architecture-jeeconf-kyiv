@@ -8,7 +8,7 @@ Provide hashtags statistics used in a tweets filtered by particular hashtag, e.g
 Statistics should be provided from all time till today + **right now**.
 
 ### Batch View
-Batch view creation is simplified, i.e. it is assumed that there is a batch layer that processed all historical tweets and produced some output. BatchViewTest can be used to generated batch view in *.parquet* format with data listed below:
+Batch view creation is simplified, i.e. it is assumed that there is a batch layer that processed all historical tweets and produced some output. 'BatchTest' can be used to generated batch view in *.parquet* format with data listed below:
 * apache – 6
 * architecture – 12
 * aws – 3
@@ -74,20 +74,32 @@ All properties are self explanatory, but few the most important ones are listed 
 | Name | Type | Default value | Description |
 | ---- | ---- | ------------- | ----------- |
 | server.port | Integer | 9090 | The port to listen for incoming HTTP requests |
+| batch.view.file.path | String |  | Path to batch view |
+| batch.view.force.precache | Boolean | true | Decides whether to pre cache batch view or not |
+| twitter.filter.text | String | #jeeconf | To filter only specific tweets |
+| twitter.filter.date | Date | 20160519 | To filter only new tweets |
 
 #### Spark Properties
 | Name | Type | Default value | Description |
 | ---- | ---- | ------------- | ----------- |
 | spark.master | String | spark://127.0.0.1:7077 | The URL of the Spark master. For development purposes, you can use `local[n]` that will run Spark on n threads on the local machine without connecting to a cluster. For example, `local[2]`. |
+|spark.distributed-libraries | String | | Path to distributed library that should be loaded into each worker of a Spark cluster. |
+| spark.streaming.context.enable | Boolean | true | Whether start Spark streaming context as it should be on production or just create it and let tests configure it for own purposes |
+| spark.streaming.batch.duration.seconds | Long | 15 | Interval in seconds to trigger new data into stream, i.e. interval between mini batches |
+| spark.streaming.remember.duration.seconds | Long | 6000 | You can also run SQL queries on tables defined on streaming data from a different thread (that is, asynchronous to the running StreamingContext). Just make sure that you set the StreamingContext to remember a sufficient amount of streaming data such that the query can run. Otherwise the StreamingContext, which is unaware of the any asynchronous SQL queries, will delete off old streaming data before the query can complete. |
+| spark.streaming.checkpoint.directory | String | /tmp/checkpoint | Directory used for check pointing |
+| spark.streaming.file.stream.enable | Boolean | false | # Whether use file stream instead of real Twitter. Main purpose - is backup plan when there is no Internet connection. |
+| spark.streaming.directory | String | | Directory used as backup plan for streaming when Twitter is not available |
 
 #### Sample configuration for a local development environment
-Create application.properties (for instance, in your user home directory) and override any of the described properties. For instance, minimum set of values that should be specified for your local environment is listed below:
+Create *application.properties* (for instance, in your user home directory) and override any of the described properties. 
+For instance, minimum set of values that should be specified for your local environment is listed below:
 ```
 spark.distributed-libraries=<path_to_your_repo>/spark-distributed-library/build/libs/spark-distributed-library-1.0-SNAPSHOT-all.jar
 
 batch.view.file.path=<path_to_your_repo>/spark-driver/src/test/resources/batch-views/batch-view.parquet
 ```
-Create twitter4j.properties (for instance, in your user home directory) and use the following properties for your local environment:
+Create *twitter4j.properties* (for instance, in your user home directory) and use the following properties for your local environment:
 ```
 oauth.consumerKey=<replace with your own>
 oauth.consumerSecret=<replace with your own>
@@ -101,4 +113,3 @@ In order to run the application please add spring.config.location parameter that
 ```
 spring.config.location=/Users/<your user>/application.properties,/Users/<your user>/twitter4j.properties
 ```
-
