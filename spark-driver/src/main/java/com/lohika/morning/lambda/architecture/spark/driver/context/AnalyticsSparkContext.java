@@ -1,11 +1,12 @@
 package com.lohika.morning.lambda.architecture.spark.driver.context;
 
+import com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.map.TweetParser;
 import com.lohika.morning.lambda.architecture.spark.driver.service.speed.StreamingService;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.streaming.Durations;
-import org.apache.spark.streaming.api.java.JavaReceiverInputDStream;
+import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.api.java.JavaStreamingContextFactory;
 import org.apache.spark.streaming.twitter.TwitterUtils;
@@ -54,7 +55,7 @@ public class AnalyticsSparkContext implements InitializingBean {
     private String checkpointDirectory;
 
     @Value("${twitter.filter.text}")
-    private String filterText;
+    private String twitterFilterText;
 
     @Value("${oauth.consumerKey}")
     private String oauthConsumerKey;
@@ -67,6 +68,12 @@ public class AnalyticsSparkContext implements InitializingBean {
 
     @Value("${oauth.accessTokenSecret}")
     private String oauthAccessTokenSecret;
+
+    @Value("${spark.streaming.directory}")
+    private String streamingDirectory;
+
+    @Value("${spark.streaming.file.stream.enable}")
+    private Boolean enableFileStreamAsBackup;
 
     @Autowired
     private StreamingService streamingService;
@@ -81,10 +88,19 @@ public class AnalyticsSparkContext implements InitializingBean {
                 JavaStreamingContext javaStreamingContext = new JavaStreamingContext(javaSparkContext,
                         Durations.seconds(batchDurationInSeconds));
 
-                JavaReceiverInputDStream<Status> twitterStatuses = TwitterUtils.createStream(javaStreamingContext,
-                    createTwitterAuthorization(), new String[]{filterText});
+                JavaDStream<Status> twitterStatuses = null;
 
-                // Pipelines.
+                if (enableFileStreamAsBackup) {
+                    // Fake tweets from file system used as a backup plan.
+                    JavaDStream<String> rawDataStream = javaStreamingContext.textFileStream(streamingDirectory);
+                    twitterStatuses = rawDataStream.map(new TweetParser());
+                } else {
+                    // Real tweets from Twitter.
+                    twitterStatuses = TwitterUtils.createStream(javaStreamingContext,
+                            createTwitterAuthorization(), new String[]{twitterFilterText});
+                }
+
+                // Pipeline is agnostic about source of the tweets.
                 streamingService.incrementRealTimeView(twitterStatuses);
 
                 javaStreamingContext.remember(Durations.seconds(rememberDurationInSeconds));

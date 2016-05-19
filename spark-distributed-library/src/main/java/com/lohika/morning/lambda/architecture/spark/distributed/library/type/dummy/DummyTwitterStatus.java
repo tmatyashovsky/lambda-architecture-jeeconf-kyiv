@@ -1,4 +1,4 @@
-package com.lohika.morning.lambda.architecture.spark.driver.service.speed.type;
+package com.lohika.morning.lambda.architecture.spark.distributed.library.type.dummy;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.Date;

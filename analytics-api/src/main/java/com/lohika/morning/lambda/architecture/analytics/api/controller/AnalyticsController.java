@@ -18,7 +18,8 @@ public class AnalyticsController {
 
     @RequestMapping(value = "/analytics", method = RequestMethod.GET)
     ResponseEntity<List<HashTagCount>> getAnalytics() {
-        List<HashTagCount> twitterHashTagsCount = analyticsService.getTwitterHashTagsCount();
+        List<HashTagCount> twitterHashTagsCount =
+                analyticsService.getTwitterHashTagsCount();
 
         if (!twitterHashTagsCount.isEmpty()) {
             return new ResponseEntity<>(twitterHashTagsCount, HttpStatus.OK);

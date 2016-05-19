@@ -1,7 +1,7 @@
 package com.lohika.morning.lambda.architecture.spark.driver.service.speed;
 
 import static com.lohika.morning.lambda.architecture.spark.distributed.library.type.Column.HASH_TAG;
-import com.lohika.morning.lambda.architecture.spark.driver.service.speed.type.TweetParser;
+import com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.map.TweetParser;
 import com.lohika.morning.lambda.architecture.spark.driver.type.HashTagCount;
 import java.io.IOException;
 import java.nio.file.Files;
