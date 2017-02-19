@@ -24,7 +24,7 @@ ext {
   jacksonVersion = '2.6.5'
 
   apacheSparkVersion = '2.1.0'
-  apacheSparkTwitterVersion = '1.6.3'
+  apacheSparkTwitterVersion = '2.0.2'
   apacheSparkScalaVersion = '2.11'
 
   junitVersion = '4.12'

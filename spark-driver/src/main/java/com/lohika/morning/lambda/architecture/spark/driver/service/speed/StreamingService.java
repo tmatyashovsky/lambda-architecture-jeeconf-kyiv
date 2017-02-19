@@ -64,7 +64,7 @@ public class StreamingService {
 
         emptyRealTimeView.cache();
         emptyRealTimeView.count();
-        emptyRealTimeView.registerTempTable(REAL_TIME_VIEW.getValue());
+        emptyRealTimeView.createOrReplaceTempView(REAL_TIME_VIEW.getValue());
 
         return emptyRealTimeView;
     }

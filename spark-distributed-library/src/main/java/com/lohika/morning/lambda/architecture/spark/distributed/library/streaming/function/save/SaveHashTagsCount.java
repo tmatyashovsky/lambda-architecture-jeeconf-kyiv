@@ -38,7 +38,7 @@ public class SaveHashTagsCount implements VoidFunction2<JavaPairRDD<String, Long
         Dataset<Row> dataset = sparkSession.createDataFrame(hashTagCounts, SchemaUtils.generateSchemaStructure());
         dataset.cache();
         dataset.count();
-        dataset.registerTempTable(tableName);
+        dataset.createOrReplaceTempView(tableName);
 
         LOG.info(String.format("%s table successfully created", tableName));
     }

@@ -25,7 +25,9 @@ dependencies {
     compile("org.apache.spark:spark-core_$apacheSparkScalaVersion:$apacheSparkVersion")
     compile("org.apache.spark:spark-sql_$apacheSparkScalaVersion:$apacheSparkVersion")
     compile("org.apache.spark:spark-streaming_$apacheSparkScalaVersion:$apacheSparkVersion")
-    compile("org.apache.spark:spark-streaming-twitter_$apacheSparkScalaVersion:$apacheSparkTwitterVersion")
+    // TODO: workaround to fix Spark Twitter Streaming exception : (org.apache.spark.Logging) class not found
+//    compile("org.apache.spark:spark-streaming-twitter_$apacheSparkScalaVersion:$apacheSparkTwitterVersion")
+    compile("org.apache.bahir:spark-streaming-twitter_$apacheSparkScalaVersion:$apacheSparkTwitterVersion")
     compile("ch.qos.logback:logback-classic:$logbackVersion")
 }
 

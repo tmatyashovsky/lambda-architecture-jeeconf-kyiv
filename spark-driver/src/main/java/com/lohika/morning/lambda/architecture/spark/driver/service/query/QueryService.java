@@ -24,7 +24,7 @@ public class QueryService {
     public List<HashTagCount> mergeHashTagsCount() {
         Dataset<Row> realTimeView = streamingService.getRealTimeView();
         Dataset<Row> batchView = servingService.getBatchView();
-        Dataset<Row> mergedView = realTimeView.unionAll(batchView)
+        Dataset<Row> mergedView = realTimeView.union(batchView)
                                            .groupBy(realTimeView.col(HASH_TAG.getValue()))
                                            .sum(COUNT.getValue())
                                            .orderBy(HASH_TAG.getValue());
