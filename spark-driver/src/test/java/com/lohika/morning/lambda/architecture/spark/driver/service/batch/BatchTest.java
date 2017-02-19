@@ -16,12 +16,9 @@ public class BatchTest extends BaseBatchTest {
         List<Row> hashTagsCount = new ArrayList<>();
         hashTagsCount.add(RowFactory.create("apache", 6L));
         hashTagsCount.add(RowFactory.create("architecture", 12L));
-        hashTagsCount.add(RowFactory.create("aws", 3L));
+        hashTagsCount.add(RowFactory.create("itvechornyci", 12L));
         hashTagsCount.add(RowFactory.create("java", 4L));
-        hashTagsCount.add(RowFactory.create("jeeconf", 7L));
         hashTagsCount.add(RowFactory.create("lambda", 6L));
-        hashTagsCount.add(RowFactory.create("morningatlohika", 15L));
-        hashTagsCount.add(RowFactory.create("simpleworkflow", 14L));
         hashTagsCount.add(RowFactory.create("spark", 5L));
 
         Dataset batchView = getAnalyticsSparkContext().getSparkSession().createDataFrame(hashTagsCount,
@@ -35,6 +32,7 @@ public class BatchTest extends BaseBatchTest {
 
         // Assert that the file was written.
         Dataset actualBatchView = getAnalyticsSparkContext().getSparkSession().read().parquet(parquetOutputFile);
+        actualBatchView = actualBatchView.orderBy(actualBatchView.col("hashTag"));
         assertEquals(batchView.collectAsList(), actualBatchView.collectAsList());
     }
 
