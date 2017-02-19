@@ -1,10 +1,15 @@
 package com.lohika.morning.lambda.architecture.spark.driver.context;
 
 import com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.map.TweetParser;
+import com.lohika.morning.lambda.architecture.spark.distributed.library.type.Column;
+import com.lohika.morning.lambda.architecture.spark.distributed.library.type.View;
 import com.lohika.morning.lambda.architecture.spark.driver.service.speed.StreamingService;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import static org.apache.spark.sql.functions.*;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
@@ -50,6 +55,9 @@ public class AnalyticsSparkContext implements InitializingBean {
     @Value("${spark.streaming.context.enable}")
     private Boolean enableStreamingContext;
 
+    @Value("${spark.streaming.structured.enable}")
+    private Boolean enableStructuredStreaming;
+
     @Value("${spark.streaming.checkpoint.directory}")
     private String checkpointDirectory;
 
@@ -83,8 +91,12 @@ public class AnalyticsSparkContext implements InitializingBean {
         sparkSession = SparkSession.builder().sparkContext(sparkContext).getOrCreate();
 
         if (enableStreamingContext) {
-            javaStreamingContext = JavaStreamingContext.getOrCreate(checkpointDirectory, this::createJavaStreamingContext);
-            javaStreamingContext.start();
+            if (enableStructuredStreaming) {
+                startStreamingQuery();
+            } else {
+                javaStreamingContext = JavaStreamingContext.getOrCreate(checkpointDirectory, this::createJavaStreamingContext);
+                javaStreamingContext.start();
+            }
         } else {
             javaStreamingContext = new JavaStreamingContext(javaSparkContext, Durations.seconds(batchDurationInSeconds));
         }
@@ -115,6 +127,7 @@ public class AnalyticsSparkContext implements InitializingBean {
         return javaStreamingContext;
     }
 
+
     private Authorization createTwitterAuthorization() {
         Configuration configuration = new ConfigurationBuilder()
                 .setOAuthConsumerKey(oauthConsumerKey)
@@ -124,6 +137,29 @@ public class AnalyticsSparkContext implements InitializingBean {
                 .build();
 
         return new OAuthAuthorization(configuration);
+    }
+
+    private void startStreamingQuery() {
+        Dataset<Row> artificialTweets = sparkSession.readStream()
+                .format("socket")
+                .option("host", "localhost")
+                .option("port", 9999)
+                .load();
+
+        Dataset<Row> filteredTweets = artificialTweets.filter(artificialTweets.col("value").contains(twitterFilterText));
+        Dataset<Row> words = filteredTweets.withColumn("words", split(column("value"), "\\s+"));
+        words = words.select(explode(column("words")).as("word"));
+
+        Dataset<Row> hashTags = words.filter(words.col("word").startsWith("#"));
+        hashTags = hashTags.withColumn("hashTag", regexp_replace(hashTags.col("word"), "#", ""));
+
+        hashTags = hashTags.groupBy(hashTags.col("hashTag").as(Column.HASH_TAG.getValue())).count().as(Column.COUNT.getValue());
+
+        hashTags.writeStream()
+                .outputMode("complete")
+                .format("memory")
+                .queryName(View.REAL_TIME_VIEW.getValue())
+                .start();
     }
 
 }
