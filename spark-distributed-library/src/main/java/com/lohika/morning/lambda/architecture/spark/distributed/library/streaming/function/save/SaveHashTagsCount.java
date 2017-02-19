@@ -7,9 +7,9 @@ import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.VoidFunction2;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Time;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,12 +33,12 @@ public class SaveHashTagsCount implements VoidFunction2<JavaPairRDD<String, Long
 
     private void saveToTempTable(JavaRDD<Row> hashTagCounts, String tableName, SparkContext sparkContext) {
         // Get the singleton instance of SQLContext.
-        SQLContext sqlContext = SQLContext.getOrCreate(sparkContext);
+        SparkSession sparkSession = SparkSession.builder().sparkContext(sparkContext).getOrCreate();
 
-        DataFrame dataFrame = sqlContext.createDataFrame(hashTagCounts, SchemaUtils.generateSchemaStructure());
-        dataFrame.cache();
-        dataFrame.count();
-        dataFrame.registerTempTable(tableName);
+        Dataset<Row> dataset = sparkSession.createDataFrame(hashTagCounts, SchemaUtils.generateSchemaStructure());
+        dataset.cache();
+        dataset.count();
+        dataset.registerTempTable(tableName);
 
         LOG.info(String.format("%s table successfully created", tableName));
     }

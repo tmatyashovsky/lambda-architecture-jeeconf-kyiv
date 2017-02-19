@@ -7,7 +7,7 @@ import com.lohika.morning.lambda.architecture.spark.driver.service.speed.Streami
 import com.lohika.morning.lambda.architecture.spark.driver.type.HashTagCount;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,9 +22,9 @@ public class QueryService {
     private StreamingService streamingService;
 
     public List<HashTagCount> mergeHashTagsCount() {
-        DataFrame realTimeView = streamingService.getRealTimeView();
-        DataFrame batchView = servingService.getBatchView();
-        DataFrame mergedView = realTimeView.unionAll(batchView)
+        Dataset<Row> realTimeView = streamingService.getRealTimeView();
+        Dataset<Row> batchView = servingService.getBatchView();
+        Dataset<Row> mergedView = realTimeView.unionAll(batchView)
                                            .groupBy(realTimeView.col(HASH_TAG.getValue()))
                                            .sum(COUNT.getValue())
                                            .orderBy(HASH_TAG.getValue());

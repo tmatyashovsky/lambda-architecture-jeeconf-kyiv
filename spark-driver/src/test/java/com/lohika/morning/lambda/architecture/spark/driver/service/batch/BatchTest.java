@@ -3,7 +3,7 @@ package com.lohika.morning.lambda.architecture.spark.driver.service.batch;
 import com.lohika.morning.lambda.architecture.spark.distributed.library.type.SchemaUtils;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import static org.junit.Assert.assertEquals;
@@ -24,7 +24,7 @@ public class BatchTest extends BaseBatchTest {
         hashTagsCount.add(RowFactory.create("simpleworkflow", 14L));
         hashTagsCount.add(RowFactory.create("spark", 5L));
 
-        DataFrame batchView = getAnalyticsSparkContext().getSqlContext().createDataFrame(hashTagsCount,
+        Dataset batchView = getAnalyticsSparkContext().getSparkSession().createDataFrame(hashTagsCount,
             SchemaUtils.generateSchemaStructure());
 
         String parquetOutputFile = this.getClass().getResource("/").getPath()
@@ -34,7 +34,7 @@ public class BatchTest extends BaseBatchTest {
         System.out.println("Created batch view at: " + parquetOutputFile);
 
         // Assert that the file was written.
-        DataFrame actualBatchView = getAnalyticsSparkContext().getSqlContext().load(parquetOutputFile);
+        Dataset actualBatchView = getAnalyticsSparkContext().getSparkSession().read().parquet(parquetOutputFile);
         assertEquals(batchView.collectAsList(), actualBatchView.collectAsList());
     }
 

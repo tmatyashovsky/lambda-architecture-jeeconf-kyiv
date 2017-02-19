@@ -1,7 +1,7 @@
 package com.lohika.morning.lambda.architecture.spark.driver.service.speed;
 
-import static com.lohika.morning.lambda.architecture.spark.distributed.library.type.Column.HASH_TAG;
 import com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.map.TweetParser;
+import static com.lohika.morning.lambda.architecture.spark.distributed.library.type.Column.HASH_TAG;
 import com.lohika.morning.lambda.architecture.spark.driver.type.HashTagCount;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
@@ -67,7 +67,7 @@ public class StreamingServiceTest extends BaseStreamingTest {
     }
 
     private void assertResults() {
-        DataFrame resultAsDataFrame = streamingService.getRealTimeView().orderBy(HASH_TAG.getValue());
+        Dataset<Row> resultAsDataFrame = streamingService.getRealTimeView().orderBy(HASH_TAG.getValue());
         List<Row> resultAsRows = resultAsDataFrame.collectAsList();
         List<HashTagCount> actualResults = resultAsRows.stream()
                                                         .map(row -> new HashTagCount(row.getString(0), row.getLong(1)))

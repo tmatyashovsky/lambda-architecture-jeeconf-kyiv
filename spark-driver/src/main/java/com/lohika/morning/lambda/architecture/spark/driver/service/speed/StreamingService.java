@@ -6,12 +6,14 @@ import com.lohika.morning.lambda.architecture.spark.distributed.library.streamin
 import com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.save.SaveHashTagsCount;
 import com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.state.UpdateStateByHashTag;
 import com.lohika.morning.lambda.architecture.spark.distributed.library.type.SchemaUtils;
+import com.lohika.morning.lambda.architecture.spark.distributed.library.type.View;
 import static com.lohika.morning.lambda.architecture.spark.distributed.library.type.View.REAL_TIME_VIEW;
 import com.lohika.morning.lambda.architecture.spark.driver.context.AnalyticsSparkContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.catalog.Table;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,20 +46,20 @@ public class StreamingService {
         realTimeIncrement.foreachRDD(new SaveHashTagsCount());
     }
 
-    public DataFrame getRealTimeView() {
-        String[] tableNames = analyticsSparkContext.getSqlContext().tableNames();
-        boolean isRealTimeViewCreated = Arrays.stream(tableNames)
-                .anyMatch(tableName -> tableName.equals(REAL_TIME_VIEW.getValue()));
+    public Dataset<Row> getRealTimeView() {
+        Dataset<Table> tables = analyticsSparkContext.getSparkSession().catalog().listTables();
+        Dataset<Table> realTimeViewTable = tables.filter(tables.col("name").equalTo(View.REAL_TIME_VIEW.getValue()));
+        boolean isRealTimeViewCreated = realTimeViewTable.count() == 1;
 
         if (isRealTimeViewCreated) {
-            return analyticsSparkContext.getSqlContext().table(REAL_TIME_VIEW.getValue());
+            return analyticsSparkContext.getSparkSession().table(REAL_TIME_VIEW.getValue());
         } else {
             return createEmptyRealTimeView();
         }
     }
 
-    private DataFrame createEmptyRealTimeView() {
-        DataFrame emptyRealTimeView = analyticsSparkContext.getSqlContext().createDataFrame(new ArrayList<>(),
+    private Dataset<Row> createEmptyRealTimeView() {
+        Dataset<Row> emptyRealTimeView = analyticsSparkContext.getSparkSession().createDataFrame(new ArrayList<>(),
             SchemaUtils.generateSchemaStructure());
 
         emptyRealTimeView.cache();

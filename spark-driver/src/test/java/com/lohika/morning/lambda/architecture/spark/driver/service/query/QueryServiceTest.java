@@ -7,7 +7,7 @@ import com.lohika.morning.lambda.architecture.spark.driver.type.HashTagCount;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import static org.hamcrest.core.Is.is;
@@ -52,10 +52,10 @@ public class QueryServiceTest extends BaseQueryTest {
         hashTagsCount.add(RowFactory.create("aws", 1L));
         hashTagsCount.add(RowFactory.create("simpleworkflow", 1L));
 
-        DataFrame realTimeView = getAnalyticsSparkContext().getSqlContext().createDataFrame(hashTagsCount,
+        Dataset realTimeView = getAnalyticsSparkContext().getSparkSession().createDataFrame(hashTagsCount,
             SchemaUtils.generateSchemaStructure());
 
-        realTimeView.registerTempTable(View.REAL_TIME_VIEW.getValue());
+        realTimeView.createOrReplaceTempView(View.REAL_TIME_VIEW.getValue());
     }
 
 }

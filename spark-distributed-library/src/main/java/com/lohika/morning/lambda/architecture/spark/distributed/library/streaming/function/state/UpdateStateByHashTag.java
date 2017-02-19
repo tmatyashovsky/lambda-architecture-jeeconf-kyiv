@@ -1,7 +1,7 @@
 package com.lohika.morning.lambda.architecture.spark.distributed.library.streaming.function.state;
 
-import com.google.common.base.Optional;
 import java.util.List;
+import org.apache.spark.api.java.Optional;
 import org.apache.spark.api.java.function.Function2;
 
 public class UpdateStateByHashTag implements Function2<List<Long>, Optional<Long>, Optional<Long>> {

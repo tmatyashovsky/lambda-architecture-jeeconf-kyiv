@@ -2,8 +2,9 @@ package com.lohika.morning.lambda.architecture.spark.driver.service.serving;
 
 import com.lohika.morning.lambda.architecture.spark.distributed.library.type.View;
 import com.lohika.morning.lambda.architecture.spark.driver.context.AnalyticsSparkContext;
-import java.util.Arrays;
-import org.apache.spark.sql.DataFrame;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.catalog.Table;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,20 +22,20 @@ public class ServingService implements InitializingBean {
     @Value("${batch.view.force.precache}")
     private Boolean forceBatchViewPreCache;
 
-    public DataFrame getBatchView() {
-        String[] tableNames = analyticsSparkContext.getSqlContext().tableNames();
-        boolean isBatchViewPreCached = Arrays.stream(tableNames)
-                                             .anyMatch(tableName -> tableName.equals(View.BATCH_VIEW.getValue()));
+    public Dataset<Row> getBatchView() {
+        Dataset<Table> tables = analyticsSparkContext.getSparkSession().catalog().listTables();
+        Dataset<Table> batchViewTable = tables.filter(tables.col("name").equalTo(View.BATCH_VIEW.getValue()));
+        boolean isBatchViewPreCached = batchViewTable.count() == 1;
 
         if (!isBatchViewPreCached) {
-            DataFrame batchView = analyticsSparkContext.getSqlContext().read().parquet(batchViewFilePath);
+            Dataset<Row> batchView = analyticsSparkContext.getSparkSession().read().parquet(batchViewFilePath);
             // To trigger cache().
-            batchView = batchView.cache();
+            batchView.cache();
             batchView.count();
 
             return batchView;
         } else {
-            return analyticsSparkContext.getSqlContext().table(View.BATCH_VIEW.getValue());
+            return analyticsSparkContext.getSparkSession().table(View.BATCH_VIEW.getValue());
         }
     }
 
